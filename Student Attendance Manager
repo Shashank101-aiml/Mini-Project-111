@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
+
+#define MAX_STUDENTS 50
+#define MAX_NAME_LENGTH 50
+#define MAX_DAYS 30
+
+// Structure to hold student information
+struct Student {
+    int rollNumber;
+    char name[MAX_NAME_LENGTH];
+    int daysPresent;
+    int daysAbsent;
+};
+
+// Function to write student records to a file
+void writeToFile(struct Student students[], int size) {
+    FILE *file = fopen("student_records.txt", "w");
+
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    fprintf(file, "Student Records:\n");
+
+    for (int i = 0; i < size; i++) {
+        fprintf(file, "Roll Number: %d\nName: %s\nDays Present: %d\nDays Absent: %d\n\n",
+                students[i].rollNumber, students[i].name, students[i].daysPresent, students[i].daysAbsent);
+    }
+
+    fclose(file);
+    printf("Student records written to file successfully.\n");
+}
+
+// Function to read and display student records from a file
+void displayFromFile() {
+    FILE *file = fopen("student_records.txt", "r");
+
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    char line[100];
+    system("cls");
+    // clrscr();
+    // printf("Student records:\n");
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        printf("%s", line);
+    }
+
+    fclose(file);
+}
+
+int main() {
+    int choice, numStudents, numDays;
+
+    printf("1. Input student details\n");
+    printf("2. View student details\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("Enter the number of students: ");
+        scanf("%d", &numStudents);
+
+        if (numStudents <= 0 || numStudents > MAX_STUDENTS) {
+            printf("Invalid number of students. Please enter a value between 1 and %d.\n", MAX_STUDENTS);
+            return 1;
+        }
+
+        struct Student students[MAX_STUDENTS];
+
+        for (int i = 0; i < numStudents; i++) {
+            printf("\nEnter details for student %d:\n", i + 1);
+            printf("Roll Number: ");
+            scanf("%d", &students[i].rollNumber);
+            printf("Name: ");
+            scanf("%s", students[i].name);
+
+            students[i].daysPresent = 0;
+            students[i].daysAbsent = 0;
+
+            printf("Enter attendance for student %d (1 for Present, 0 for Absent) for how many days: ", i + 1);
+            scanf("%d", &numDays);
+
+            if (numDays <= 0 || numDays > MAX_DAYS) {
+                printf("Invalid number of days. Please enter a value between 1 and %d.\n", MAX_DAYS);
+                return 1;
+            }
+
+            for (int j = 0; j < numDays; j++) {
+                int attendance;
+                printf("Day %d (1 for Present, 0 for Absent): ", j + 1);
+                scanf("%d", &attendance);
+
+                if (attendance == 1) {
+                    students[i].daysPresent++;
+                } else if (attendance == 0) {
+                    students[i].daysAbsent++;
+                } else {
+                    printf("Invalid input. Please enter 1 for Present or 0 for Absent.\n");
+                    j--;
+                }
+            }
+        }
+
+        // Write student records to a file
+        writeToFile(students, numStudents);
+    } else if (choice == 2) {
+        // Display student records from the file
+        displayFromFile();
+    } else {
+        printf("Invalid choice.\n");
+    }
+
+    return 0;
+}
