@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+// Define a linked list node to store fortunes
+typedef struct Node {
+    char fortune[256];
+    struct Node* next;
+} Node;
+
+// Function to create a new node
+Node* createNode(const char* fortune) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->fortune, fortune);
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to add a fortune to the linked list
+void addFortune(Node** head, const char* fortune) {
+    Node* newNode = createNode(fortune);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+// Function to get a random fortune from a linked list
+void getFortune(Node* head) {
+    int count = 0;
+    Node* temp = head;
+
+    // Count the number of nodes
+    while (temp != NULL) {
+        count++;
+        temp = temp->next;
+    }
+
+    if (count == 0) {
+        printf("No fortunes available.\n");
+        return;
+    }
+
+    // Generate a random number
+    int randomIndex = rand() % count;
+
+    // Traverse to the random index
+    temp = head;
+    for (int i = 0; i < randomIndex; i++) {
+        temp = temp->next;
+    }
+
+    // Print the fortune
+    printf("Your fortune: %s\n", temp->fortune);
+}
+
+// Function to populate the fortunes for different fields
+void defineFortunes(Node** careerHead, Node** loveHead, Node** healthHead, Node** generalHead) {
+    // Career Fortunes
+    addFortune(careerHead, "A bright opportunity is coming your way!");
+    addFortune(careerHead, "Success is within your reach; stay persistent.");
+    addFortune(careerHead, "You will excel in your next career endeavor.");
+    addFortune(careerHead, "New responsibilities will lead to personal growth.");
+    addFortune(careerHead, "A collaboration will bring great success.");
+
+    // Love Fortunes
+    addFortune(loveHead, "Someone is secretly crushing on you.");
+    addFortune(loveHead, "A special person will notice you soon.");
+    addFortune(loveHead, "Love is in the air—breathe deeply!");
+    addFortune(loveHead, "A new romantic chapter is about to begin.");
+    addFortune(loveHead, "Your charm will attract someone special.");
+
+    // Health Fortunes
+    addFortune(healthHead, "Good health and vitality are on your side.");
+    addFortune(healthHead, "Taking a break will refresh your mind and body.");
+    addFortune(healthHead, "Exercise will bring unexpected benefits soon.");
+    addFortune(healthHead, "Healthy habits will bring positive changes.");
+    addFortune(healthHead, "A balanced diet will boost your energy.");
+
+    // General Advice Fortunes
+    addFortune(generalHead, "Happiness and good vibes are on the horizon.");
+    addFortune(generalHead, "Hard work will pay off; keep pushing forward.");
+    addFortune(generalHead, "Small steps today lead to giant leaps tomorrow.");
+    addFortune(generalHead, "Your determination will inspire others.");
+    addFortune(generalHead, "Every challenge is a stepping stone to success.");
+}
+
+// Function to display astrological sign options
+void displayAstrologicalSigns() {
+    printf("Choose your astrological sign:\n");
+    printf("1. Aries\n2. Taurus\n3. Gemini\n4. Cancer\n5. Leo\n6. Virgo\n");
+    printf("7. Libra\n8. Scorpio\n9. Sagittarius\n10. Capricorn\n");
+    printf("11. Aquarius\n12. Pisces\n");
+}
+
+int main() {
+    Node *careerList = NULL, *loveList = NULL, *healthList = NULL, *generalList = NULL;
+
+    // Seed the random number generator
+    srand(time(0));
+
+    // Populate fortunes for different fields
+    defineFortunes(&careerList, &loveList, &healthList, &generalList);
+
+    // User interaction
+    char name[50];
+    int day, month, signOption;
+    char* astrologicalSigns[] = {"Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"};
+
+    printf("Welcome to the Fortune Teller!\n");
+    printf("Enter your name: ");
+    scanf("%s", name);
+
+    printf("Enter your date of birth (DD MM): ");
+    scanf("%d %d", &day, &month);
+
+    // Display and choose astrological sign
+    displayAstrologicalSigns();
+    printf("Enter the number corresponding to your astrological sign: ");
+    scanf("%d", &signOption);
+
+    if (signOption < 1 || signOption > 12) {
+        printf("Invalid choice.\n");
+        return 1;
+    }
+
+    printf("\nHello, %s! Based on your sign (%s) and birthday (%d/%d):\n", name, astrologicalSigns[signOption - 1], day, month);
+
+    // Get multiple random fortunes for different fields
+    printf("\nCareer Fortune:\n");
+    getFortune(careerList);
+    printf("\nLove Fortune:\n");
+    getFortune(loveList);
+    printf("\nHealth Fortune:\n");
+    getFortune(healthList);
+    printf("\nGeneral Advice:\n");
+    getFortune(generalList);
+
+    return 0;
+}
